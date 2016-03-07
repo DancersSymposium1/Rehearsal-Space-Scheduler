@@ -1,0 +1,57 @@
+111	Cheryl Bond	F	cbond@andrew.cmu.edu	5628898872
+113	Danielle Quan	F	dquan@andrew.cmu.edu	9162136370
+114	Nicholas Medich	M	nmedich@andrew.cmu.edu	4124459857
+121	Danny Zhu	M	dannyz@andrew.cmu.edu	3479483948
+128	Charmaine Yau	F	cyau@andrew.cmu.edu	4127594012
+131	Nikita Sharma	F	ndsharma@andrew.cmu.edu	904-303-2660
+132	Nika Postnikov	F	npostnik@andrew.cmu.edu	917-535-4739
+133	Angela Ng	F	angelan@andrew.cmu.edu	2489469155
+137	Lewis Li	M	jieming1@andrew.cmu.edu	4127608831
+141	Rebecca Kalmeijer	F	rkalmeij@andrew.cmu.edu	0
+147	Zichen Liu	F	zichenl@andrew.cmu.edu	9143127298
+148	saloni saxena	F	salonis@andrew.cmu.edu	2016478412
+149	Ariana Zahedi	F	azahedi@andrew.cmu.edu	617-999-9308
+150	Yuchien (Bettina)  Chou	F	yuchienc@andrew.cmu.edu	9739346866
+151	Vibhav Ganesh	M	vnganesh@andrew.cmu.edu	8322781752
+154	Kelly  Underwood	F	kcu@andrew.cmu.edu	2022302287
+155	Chantal Striepe	F	cstriepe@andrew.cmu.edu	0
+167	Lilian Chin	F	lschin@andrew.cmu.edu	5106486818
+187	Grant Schwabacher	M	gschwaba@andrew.cmu.edu	2032163973
+189	Paige Thompson	F	pathomps@andrew.cmu.edu	8452698905
+195	Rufeng Ji	M	rufengj@andrew.cmu.edu	2486869930
+197	Jessica  Shen	F	jshen1@andrew.cmu.edu	6262433998
+198	Andrew Capodieci	M	andrew.capodieci@gmail.com	
+206	Nandini Ramakrishnan	F	nramakri@andrew.cmu.edu	4128778008
+207	Alisa Adwaney	F	aadwaney@andrew.cmu.edu	732-318-1902
+208	Erik Pintar	M	epintar@andrew.cmu.edu	414-897-4261
+213	Jude Caminos	M	gcaminos@andrew.cmu.edu	6104426889
+214	Gabriela Cach	F	gcach@andrew.cmu.edu	3234972589
+217	Elizabeth Kuo	F	efk@andrew.cmu.edu	6467532354
+220	Sheril Christopher	F	spchrist@andrew.cmu.edu	6099037071
+221	Jenny Wong	F	jennyw@andrew.cmu.edu	646 436 1645
+227	Lilli Choung	F	lchoung@andrew.cmu.edu	5109962688
+228	Eileen Jiang	F	yuanj@andrew.cmu.edu	9253308532
+229	Kai Hernandez	M	kjhernan@andrew.cmu.edu	4074175029
+231	Aditya  Dargan	M	adargan@andrew.cmu.edu	1
+238	Tom Tseng	M	thomasts@andrew.cmu.edu	4257776626
+239	Briana Williams	F	bjwillia@andrew.cmu.edu	4437913827
+241	Beth Luan	F	donghuil@andrew.cmu.edu	4124820527
+247	Ashwin Sekar	M	asekar@andrew.cmu.edu	3016930977
+248	Richard Huang	M	rahuang@andrew.cmu.edu	2012816121
+251	Sruti Modekurty	F	ssmodekur@andrew.cmu.edu	9162206131
+255	Fei Lu	F	feilu@andrew.cmu.edu	4129611075
+257	Radhika Dalal	F	rdalal@andrew.cmu.edu	609-712-1122
+258	Annie Chen	F	annieche@andrew.cmu.edu	9099129987
+263	LeShaun Jones	F	lkjones@andrew.cmu.edu	3475782969
+271	alina rath	F	arath@andrew.cmu.edu	4123781565
+273	Maunika Atmakuri	F	"matmakur@andrew	0
+275	Sophia Deng	F	sophaid@andrew.cmu.edu	9737387220
+279	Akira Kyle	M	akyle@cmu.edu	7203315037
+294	Karishma Manglani	F	kmanglan@andrew.cmu.edu	7818999015
+306	Ranjini Narayan	F	rnarayan@andrew.cmu.edu	2399894941
+314	Noah FATSI	M	naf@andrew.cmu.edu	(804)971-2491
+316	Inez Khan	F	inezk@andrew.cmu.edu	6173352313
+319	Allison Ngo	F	ahngo@andrew.cmu.edu	4088342074
+********************
+Emails to copy:
+cbond@andrew.cmu.edu, dquan@andrew.cmu.edu, nmedich@andrew.cmu.edu, dannyz@andrew.cmu.edu, cyau@andrew.cmu.edu, ndsharma@andrew.cmu.edu, npostnik@andrew.cmu.edu, angelan@andrew.cmu.edu, jieming1@andrew.cmu.edu, rkalmeij@andrew.cmu.edu, zichenl@andrew.cmu.edu, salonis@andrew.cmu.edu, azahedi@andrew.cmu.edu, yuchienc@andrew.cmu.edu, vnganesh@andrew.cmu.edu, kcu@andrew.cmu.edu, cstriepe@andrew.cmu.edu, lschin@andrew.cmu.edu, gschwaba@andrew.cmu.edu, pathomps@andrew.cmu.edu, rufengj@andrew.cmu.edu, jshen1@andrew.cmu.edu, andrew.capodieci@gmail.com, nramakri@andrew.cmu.edu, aadwaney@andrew.cmu.edu, epintar@andrew.cmu.edu, gcaminos@andrew.cmu.edu, gcach@andrew.cmu.edu, efk@andrew.cmu.edu, spchrist@andrew.cmu.edu, jennyw@andrew.cmu.edu, lchoung@andrew.cmu.edu, yuanj@andrew.cmu.edu, kjhernan@andrew.cmu.edu, adargan@andrew.cmu.edu, thomasts@andrew.cmu.edu, bjwillia@andrew.cmu.edu, donghuil@andrew.cmu.edu, asekar@andrew.cmu.edu, rahuang@andrew.cmu.edu, ssmodekur@andrew.cmu.edu, feilu@andrew.cmu.edu, rdalal@andrew.cmu.edu, annieche@andrew.cmu.edu, lkjones@andrew.cmu.edu, arath@andrew.cmu.edu, "matmakur@andrew, sophaid@andrew.cmu.edu, akyle@cmu.edu, kmanglan@andrew.cmu.edu, rnarayan@andrew.cmu.edu, naf@andrew.cmu.edu, inezk@andrew.cmu.edu, ahngo@andrew.cmu.edu
