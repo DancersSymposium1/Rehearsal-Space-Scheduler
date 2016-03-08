@@ -111,5 +111,6 @@ def merge_timesheets(timesheet_folder):
 
 def run():
     dT = merge_timesheets(DANCE_TIMESHEET_FOLDER)
+    dT.write(os.getcwd())
 
 run()
