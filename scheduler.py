@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath("../Timesheet"))
 from timesheet_from_csv import *
 from Classes import *
 
+DANCE_TIMESHEET_FOLDER = "dance-timesheets"
 day_order = { "Sunday" : 0, "Sun" : 0, "Su" : 0, "Sn" : 0,
               "Sun." : 0, "Su." : 0, "Sn." : 0,
               "Monday" : 1, "Mon" : 1, "Mo" : 1, "M" : 1,
@@ -68,7 +69,7 @@ def create_dict_of_timesheets(timesheet_folder):
     ts = dict() # dictionary of timesheets
     ts["dayHeader"], ts["timeHeader"], ts["timeHeader_info"], ts["name"] = [], [], [], ""
     for filename in os.listdir(timesheet_folder.strip("/")):
-        T = timesheet_from_csv(timesheet_folder + filename)
+        T = timesheet_from_csv(timesheet_folder + "/" + filename)
         ts[T.name] = T
         if len(ts["name"]) == 0:
             ts["name"] = T.name[:T.name.find("-") - 1]
@@ -94,8 +95,8 @@ def build_L(freeTime, ts):
         L[time_index][day_index] = ""
     return L
 
-def merge_timesheets(TIMESHEET_FOLDER):
-    ts = create_dict_of_timesheets(TIMESHEET_FOLDER)
+def merge_timesheets(timesheet_folder):
+    ts = create_dict_of_timesheets(timesheet_folder)
     freeTime = []
     for name in ts:
         if type(ts[name]) is Timesheet:
@@ -109,6 +110,6 @@ def merge_timesheets(TIMESHEET_FOLDER):
     return masterT
 
 def run():
-    T = merge_timesheets("timesheets/")
+    dT = merge_timesheets(DANCE_TIMESHEET_FOLDER)
 
 run()
