@@ -34,22 +34,25 @@ def timeHeader_redefine(ts, T):
     if len(ts["timeHeader_info"]) > 0: # check to redefine timeHeader boundaries
         if ts["timeHeader_info"][0] > T.startingTime:
             ts["timeHeader_info"][0] = T.startingTime
+            ts["timeHeader_info"][3] = len(T.timeHeader)
         if ts["timeHeader_info"][1] != T.timeIncrement:
             print "timeIncrement has changed for %s, please proceed with caution" % T.name
+            ts["timeHeader_info"][3] < len(T.timeHeader)
         if ts["timeHeader_info"][2] < T.endingTime:
             ts["timeHeader_info"][2] = T.endingTime
+            ts["timeHeader_info"][3] < len(T.timeHeader)
+            
     else:
-        ts["timeHeader_info"] = [T.startingTime, T.timeIncrement, T.endingTime]
-    
+        ts["timeHeader_info"] = [T.startingTime, T.timeIncrement, T.endingTime, len(T.timeHeader)]
+
+    list_time = []
     start_time = ts["timeHeader_info"][0]
     incr_time = ts["timeHeader_info"][1]
     end_time = ts["timeHeader_info"][2]
-    list_time = []
-    i_time = start_time
-    while i_time <= end_time:
-        print i_time, str(i_time)
-        list_time.append(str(i_time))
-        i_time = i_time + incr_time
+    len_time = ts["timeHeader_info"][3]
+    for i_time in xrange(len_time):
+        list_time.append(str(start_time))
+        start_time += incr_time
     ts["timeHeader"] = list_time
     return ts
 
@@ -71,27 +74,39 @@ def free_times(T): # returns all of the times free in the timesheet
     return freeTimes
 
 def build_L(freeTime, ts):
-    L = [ ["x"] * len(ts["dayHeader"]) ] * len(ts["timeHeader"])
+    L = [["x" for i in xrange(len(ts["dayHeader"]))] for j in xrange(len(ts["timeHeader"]))]
+#    for i in xrange(len(L)): 
+#        print L[i]
+#    print freeTime
+    count = 0
     for fT in freeTime:
         (day, time) = fT
-        print time, ts["timeHeader"]
+#        print type(day), type(time), type(fT)
+#        print ts["dayHeader"], ts["timeHeader"]
         day_index, time_index = ts["dayHeader"].index(day), ts["timeHeader"].index(time)
+#        print day_index, day, time_index, time, type(L)
+#        for i in xrange(len(L)): print i, L[i], type(L[i])
+#        print
         L[time_index][day_index] = ""
+#        print  
+#        for i in xrange(len(L)): print i, L[i], type(L[i])
     return L
 
 def run():
     ts = create_dict_of_timesheets(TIMESHEET_FOLDER)
     freeTime = []
-    print "hi"
     for name in ts:
         if type(ts[name]) is Timesheet:
-            tsTime = free_times(ts[name])
+            tsTime = free_times(ts[name]) #@TODO: Implement slack variable
             if len(freeTime) > 0:
                 freeTime = [val for val in freeTime if val in set(tsTime)]
             else:
                 freeTime = tsTime
+#    print freeTime
     L = build_L(freeTime, ts)
-    for row in L:
-        print row
+#    for row in L: 
+#        print row
+    masterT = Timesheet("Alexis, David, Leann S16", L, ts["dayHeader"], ts["timeHeader"])
+    masterT.disp()
 
 run()
