@@ -6,7 +6,6 @@ sys.path.append(os.path.abspath("../Timesheet"))
 from timesheet_from_csv import *
 from Classes import *
 
-TIMESHEET_FOLDER = "timesheets/"
 day_order = { "Sunday" : 0, "Sun" : 0, "Su" : 0, "Sn" : 0,
               "Sun." : 0, "Su." : 0, "Sn." : 0,
               "Monday" : 1, "Mon" : 1, "Mo" : 1, "M" : 1,
@@ -21,6 +20,15 @@ day_order = { "Sunday" : 0, "Sun" : 0, "Su" : 0, "Sn" : 0,
               "Fri." : 5, "Fr." : 5, "F." : 5,
               "Saturday" : 6, "Sat" : 6, "Sa" : 6,
               "Sat." : 6, "Sa." : 6 }
+
+def merge_from_zero(s1, s2):
+    res = ""
+    for i in xrange(len(s1)):
+        if s1[i] == s2[i]:
+            res += s1[i]
+        else:
+            break
+    return res
 
 def dayHeader_add(ts, T):
     ts_dH_set = set(ts["dayHeader"])
@@ -58,10 +66,14 @@ def timeHeader_redefine(ts, T):
 
 def create_dict_of_timesheets(timesheet_folder):
     ts = dict() # dictionary of timesheets
-    ts["dayHeader"], ts["timeHeader"], ts["timeHeader_info"] = [], [], []
+    ts["dayHeader"], ts["timeHeader"], ts["timeHeader_info"], ts["name"] = [], [], [], ""
     for filename in os.listdir(timesheet_folder.strip("/")):
         T = timesheet_from_csv(timesheet_folder + filename)
         ts[T.name] = T
+        if len(ts["name"]) == 0:
+            ts["name"] = T.name[:T.name.find("-") - 1]
+        else:
+            ts["name"] = merge_from_zero(ts["name"], T.name)
         ts = dayHeader_add(ts, T)
         ts = timeHeader_redefine(ts, T)
     return ts
@@ -75,24 +87,14 @@ def free_times(T): # returns all of the times free in the timesheet
 
 def build_L(freeTime, ts):
     L = [["x" for i in xrange(len(ts["dayHeader"]))] for j in xrange(len(ts["timeHeader"]))]
-#    for i in xrange(len(L)): 
-#        print L[i]
-#    print freeTime
     count = 0
     for fT in freeTime:
         (day, time) = fT
-#        print type(day), type(time), type(fT)
-#        print ts["dayHeader"], ts["timeHeader"]
         day_index, time_index = ts["dayHeader"].index(day), ts["timeHeader"].index(time)
-#        print day_index, day, time_index, time, type(L)
-#        for i in xrange(len(L)): print i, L[i], type(L[i])
-#        print
         L[time_index][day_index] = ""
-#        print  
-#        for i in xrange(len(L)): print i, L[i], type(L[i])
     return L
 
-def run():
+def merge_timesheets(TIMESHEET_FOLDER):
     ts = create_dict_of_timesheets(TIMESHEET_FOLDER)
     freeTime = []
     for name in ts:
@@ -102,11 +104,11 @@ def run():
                 freeTime = [val for val in freeTime if val in set(tsTime)]
             else:
                 freeTime = tsTime
-#    print freeTime
     L = build_L(freeTime, ts)
-#    for row in L: 
-#        print row
-    masterT = Timesheet("Alexis, David, Leann S16", L, ts["dayHeader"], ts["timeHeader"])
-    masterT.disp()
+    masterT = Timesheet(ts["name"], L, ts["dayHeader"], ts["timeHeader"])
+    return masterT
+
+def run():
+    T = merge_timesheets("timesheets/")
 
 run()
