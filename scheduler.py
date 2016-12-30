@@ -7,6 +7,7 @@ from timesheet_from_csv import *
 from Classes import *
 
 DANCE_TIMESHEET_FOLDER = "dance-timesheets"
+SPACE_TIMESHEET_FOLDER = "space-timesheets"
 day_order = { "Sunday" : 0, "Sun" : 0, "Su" : 0, "Sn" : 0,
               "Sun." : 0, "Su." : 0, "Sn." : 0,
               "Monday" : 1, "Mon" : 1, "Mo" : 1, "M" : 1,
@@ -21,6 +22,7 @@ day_order = { "Sunday" : 0, "Sun" : 0, "Su" : 0, "Sn" : 0,
               "Fri." : 5, "Fr." : 5, "F." : 5,
               "Saturday" : 6, "Sat" : 6, "Sa" : 6,
               "Sat." : 6, "Sa." : 6 }
+ASSIGNED_UNASSIGNED_FILE = "ASSIGN_SPRING2016.csv"
 
 def merge_from_zero(s1, s2):
     res = ""
@@ -109,8 +111,63 @@ def merge_timesheets(timesheet_folder):
     masterT = Timesheet(ts["name"], L, ts["dayHeader"], ts["timeHeader"])
     return masterT
 
+def create_space_dict():
+    sD = dict()
+    sDict = create_dict_of_timesheets(SPACE_TIMESHEET_FOLDER)
+    for key in sDict:
+        if sDict["name"] in key:
+            sIkey.find("-") + 2
+            sD[key.find("-") + 2:] = sDict[key]
+    return sD
+
+def make_assign_list():
+    aD = dict()
+    last_choreographer = ""
+    assign_file = open(ASSIGNED_UNASSIGNED_FILE, 'rU')
+    for i, line in enumerate(assign_file):
+        text = line.strip().split(",")
+
+        try:
+            parse_attempt = int(text[0])
+            dancer = text[1].strip()
+            aD[last_choreographer] += 1
+            #print "Successfully added %s to %s's piece" % (dancer, last_choreographer)
+        except:
+            last_choreographer = text[0].strip()
+            aD[last_choreographer] = 0 #create piece in assign_list
+            #print "Successfully created %s's piece" % last_choreographer    
+    assign_file.close()
+
+    aL = sorted(aD, key=aD.get, reverse=True)
+    return aL
+
 def run():
     dT = merge_timesheets(DANCE_TIMESHEET_FOLDER)
-    dT.write(os.getcwd())
+    dT.write(os.getcwd()) # prints to "<dance name - sem/year>.txt"
 
+    sD = create_space_dict()
+    aL = make_assign_list()
+    print aL
+"""
+    for key in sDict:
+        if (key == "dayHeader"): 
+            print "dayHeader"
+            print sDict[key]
+        elif (key == "timeHeader"):
+            print "timeHeader"
+            print sDict[key]
+        elif (key == "timeHeader_info"):
+            print "timeHeader_info"
+            print "starting time: %s" % sDict[key][0]
+            print "time increment: %d" % sDict[key][1]
+            print "ending time: %s" % sDict[key][2]
+            print "number of time blocks: %d" % sDict[key][3]
+        elif (key == "name"):
+            print "name"
+            print sDict[key]
+        else:
+            print "key: %s" % key
+            print "type(sDict[key]): %s" % type(sDict[key])
+        print ""
+"""
 run()
