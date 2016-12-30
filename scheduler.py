@@ -1,28 +1,29 @@
 import sys
 import os
 
-# download "Timesheet" & "Rehearsal-Space-Scheduler" repos into same directory
-sys.path.append(os.path.abspath("../Timesheet"))
+# NOTE: download "Timesheet" & "Rehearsal-Space-Scheduler" repos into same directory
+sys.path.append(os.path.realpath(os.path.abspath("../Timesheet")))
 from timesheet_from_csv import *
 from Classes import *
 
 DANCE_TIMESHEET_FOLDER = "dance-timesheets"
 SPACE_TIMESHEET_FOLDER = "space-timesheets"
-day_order = { "Sunday" : 0, "Sun" : 0, "Su" : 0, "Sn" : 0,
-              "Sun." : 0, "Su." : 0, "Sn." : 0,
-              "Monday" : 1, "Mon" : 1, "Mo" : 1, "M" : 1,
-              "Mon." : 1, "Mo." : 1, "M." : 1,
-              "Tuesday" : 2, "Tues" : 2, "Tue" : 2, "Tu" : 2, "T" : 2,
-              "Tues." : 2, "Tue." : 2, "Tu." : 2, "T." : 2,
-              "Wednesday" : 3, "Wed" : 3, "We" : 3, "W" : 3,
-              "Wed." : 3, "We." : 3, "W." : 3,
-              "Thursday" : 4, "Thurs" : 4, "Thur" : 4, "Thu" : 4, "Th" : 4, "H" : 4,
-              "Thurs." : 4, "Thur." : 4, "Thu." : 4, "Th." : 4, "H." : 4,
-              "Friday" : 5, "Fri" : 5, "Fr" : 5, "F" : 5,
-              "Fri." : 5, "Fr." : 5, "F." : 5,
-              "Saturday" : 6, "Sat" : 6, "Sa" : 6,
-              "Sat." : 6, "Sa." : 6 }
 ASSIGNED_UNASSIGNED_FILE = "ASSIGN_SPRING2016.csv"
+
+day_order = { "Sunday" : 0, "Sun"  : 0, "Su"  : 0, "Sn"  : 0,
+                            "Sun." : 0, "Su." : 0, "Sn." : 0,
+              "Monday" : 1, "Mon"  : 1, "Mo"  : 1, "M"  : 1,
+                            "Mon." : 1, "Mo." : 1, "M." : 1,
+              "Tuesday" : 2, "Tues"  : 2, "Tue"  : 2, "Tu"  : 2, "T"  : 2,
+                             "Tues." : 2, "Tue." : 2, "Tu." : 2, "T." : 2,
+              "Wednesday" : 3, "Wed"  : 3, "We"  : 3, "W"  : 3,
+                               "Wed." : 3, "We." : 3, "W." : 3,
+              "Thursday" : 4, "Thurs"  : 4, "Thur"  : 4, "Thu"  : 4, "Th"  : 4, "H"  : 4,
+                              "Thurs." : 4, "Thur." : 4, "Thu." : 4, "Th." : 4, "H." : 4,
+              "Friday" : 5, "Fri"  : 5, "Fr"  : 5, "F"  : 5,
+                            "Fri." : 5, "Fr." : 5, "F." : 5,
+              "Saturday" : 6, "Sat"  : 6, "Sa"  : 6,
+                              "Sat." : 6, "Sa." : 6 }
 
 def merge_from_zero(s1, s2):
     res = ""
@@ -114,10 +115,9 @@ def merge_timesheets(timesheet_folder):
 def create_space_dict():
     sD = dict()
     sDict = create_dict_of_timesheets(SPACE_TIMESHEET_FOLDER)
-    for key in sDict:
-        if sDict["name"] in key:
-            sIkey.find("-") + 2
-            sD[key.find("-") + 2:] = sDict[key]
+    for skey in sDict:
+        if sDict["name"] in skey:
+            sD[skey[skey.find("-") + 2:]] = sDict[skey]
     return sD
 
 def make_assign_list():
@@ -141,33 +141,16 @@ def make_assign_list():
     aL = sorted(aD, key=aD.get, reverse=True)
     return aL
 
+def assign_dances(dT, sD, aL):
+    #@TODO: this
+
 def run():
     dT = merge_timesheets(DANCE_TIMESHEET_FOLDER)
     dT.write(os.getcwd()) # prints to "<dance name - sem/year>.txt"
 
     sD = create_space_dict()
-    aL = make_assign_list()
-    print aL
-"""
-    for key in sDict:
-        if (key == "dayHeader"): 
-            print "dayHeader"
-            print sDict[key]
-        elif (key == "timeHeader"):
-            print "timeHeader"
-            print sDict[key]
-        elif (key == "timeHeader_info"):
-            print "timeHeader_info"
-            print "starting time: %s" % sDict[key][0]
-            print "time increment: %d" % sDict[key][1]
-            print "ending time: %s" % sDict[key][2]
-            print "number of time blocks: %d" % sDict[key][3]
-        elif (key == "name"):
-            print "name"
-            print sDict[key]
-        else:
-            print "key: %s" % key
-            print "type(sDict[key]): %s" % type(sDict[key])
-        print ""
-"""
+    aL = make_assign_list() # ordered from largest to smallest, by increasing index
+
+    schD = assign_dances(dT, sD, aL) # dictionary of scheduled dances, index by time
+    
 run()
