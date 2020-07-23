@@ -1,156 +1,105 @@
-import sys
-import os
+# PIECE SCHEDULER ATTEMPT 1.0
+# Author: Amy Zhang
+# Date: July 23, 2020
+import openpyxl
+from csp import Constraint, CSP
+from dancer import DancerDirectory
+from typing import Dict, List, Optional
+from collections import defaultdict
 
-# NOTE: download "Timesheet" & "Rehearsal-Space-Scheduler" repos into same directory
-sys.path.append(os.path.realpath(os.path.abspath("../Timesheet")))
-from timesheet_from_csv import *
-from Classes import *
+SEM = 'S20'
+DANCER_FILE = 'Assigned_Unassigned ' + SEM + '.xlsx'
+PIECES_TO_AVAILABLE_TIMES_FILE = 'Pieces_To_Times ' + SEM + '.xlsx'
+MAX_REHEARSALS_PER_TIME_FILE = 'Max_Rehearsals_Per_Time ' + SEM + '.xlsx'
 
-DANCE_TIMESHEET_FOLDER = "dance-timesheets"
-SPACE_TIMESHEET_FOLDER = "space-timesheets"
-ASSIGNED_UNASSIGNED_FILE = "ASSIGN_SPRING2016.csv"
-
-day_order = { "Sunday" : 0, "Sun"  : 0, "Su"  : 0, "Sn"  : 0,
-                            "Sun." : 0, "Su." : 0, "Sn." : 0,
-              "Monday" : 1, "Mon"  : 1, "Mo"  : 1, "M"  : 1,
-                            "Mon." : 1, "Mo." : 1, "M." : 1,
-              "Tuesday" : 2, "Tues"  : 2, "Tue"  : 2, "Tu"  : 2, "T"  : 2,
-                             "Tues." : 2, "Tue." : 2, "Tu." : 2, "T." : 2,
-              "Wednesday" : 3, "Wed"  : 3, "We"  : 3, "W"  : 3,
-                               "Wed." : 3, "We." : 3, "W." : 3,
-              "Thursday" : 4, "Thurs"  : 4, "Thur"  : 4, "Thu"  : 4, "Th"  : 4, "H"  : 4,
-                              "Thurs." : 4, "Thur." : 4, "Thu." : 4, "Th." : 4, "H." : 4,
-              "Friday" : 5, "Fri"  : 5, "Fr"  : 5, "F"  : 5,
-                            "Fri." : 5, "Fr." : 5, "F." : 5,
-              "Saturday" : 6, "Sat"  : 6, "Sa"  : 6,
-                              "Sat." : 6, "Sa." : 6 }
-
-def merge_from_zero(s1, s2):
-    res = ""
-    for i in xrange(len(s1)):
-        if s1[i] == s2[i]:
-            res += s1[i]
+def GetMaxRehearsalsPerTime() -> Dict[str, int]:
+    book = openpyxl.load_workbook(MAX_REHEARSALS_PER_TIME_FILE)
+    sheet = book.active
+    max_rehearsals_dict = {}
+    for row in sheet.iter_rows(values_only=True):
+        if row[0] is not None:
+            max_rehearsals_dict[row[0]] = row[1]
         else:
             break
-    return res
-
-def dayHeader_add(ts, T):
-    ts_dH_set = set(ts["dayHeader"])
-    for day in T.dayHeader: ts_dH_set.add(day)
-    ts_dH_list = []
-    for i in xrange(len(ts_dH_set)): ts_dH_list.append(ts_dH_set.pop())
-    ts["dayHeader"] = sorted(ts_dH_list, key=day_order.get)
-    return ts
-
-def timeHeader_redefine(ts, T):
-    if len(ts["timeHeader_info"]) > 0: # check to redefine timeHeader boundaries
-        if ts["timeHeader_info"][0] > T.startingTime:
-            ts["timeHeader_info"][0] = T.startingTime
-            ts["timeHeader_info"][3] = len(T.timeHeader)
-        if ts["timeHeader_info"][1] != T.timeIncrement:
-            print "timeIncrement has changed for %s, please proceed with caution" % T.name
-            ts["timeHeader_info"][3] < len(T.timeHeader)
-        if ts["timeHeader_info"][2] < T.endingTime:
-            ts["timeHeader_info"][2] = T.endingTime
-            ts["timeHeader_info"][3] < len(T.timeHeader)
-            
-    else:
-        ts["timeHeader_info"] = [T.startingTime, T.timeIncrement, T.endingTime, len(T.timeHeader)]
-
-    list_time = []
-    start_time = ts["timeHeader_info"][0]
-    incr_time = ts["timeHeader_info"][1]
-    end_time = ts["timeHeader_info"][2]
-    len_time = ts["timeHeader_info"][3]
-    for i_time in xrange(len_time):
-        list_time.append(str(start_time))
-        start_time += incr_time
-    ts["timeHeader"] = list_time
-    return ts
-
-def create_dict_of_timesheets(timesheet_folder):
-    ts = dict() # dictionary of timesheets
-    ts["dayHeader"], ts["timeHeader"], ts["timeHeader_info"], ts["name"] = [], [], [], ""
-    for filename in os.listdir(timesheet_folder.strip("/")):
-        T = timesheet_from_csv(timesheet_folder + "/" + filename)
-        ts[T.name] = T
-        if len(ts["name"]) == 0:
-            ts["name"] = T.name[:T.name.find("-") - 1]
+    return max_rehearsals_dict
+ 
+def GetRehearsalsPerTime() -> Dict[str, List[str]]:
+    book = openpyxl.load_workbook(PIECES_TO_AVAILABLE_TIMES_FILE)
+    sheet = book.active
+    rehearsal_times_dict = {}
+    for row in sheet.iter_rows(values_only=True):
+        if row[0] is not None:
+            piece = row[0].lower()
+            rehearsal_times_dict[piece] = [row[1]]
+            for i in range(2, len(row)):
+                if row[i] is None:
+                    break
+                rehearsal_times_dict[piece].append(row[i])
+                i += 1
         else:
-            ts["name"] = merge_from_zero(ts["name"], T.name)
-        ts = dayHeader_add(ts, T)
-        ts = timeHeader_redefine(ts, T)
-    return ts
+            break
+    return rehearsal_times_dict
 
-def free_times(T): # returns all of the times free in the timesheet
-    freeTimes = []
-    for day in T.dayHeader:
-        for time in T.timeHeader:
-            if T.checkAvail(day, time): freeTimes.append((day, time))
-    return freeTimes
+class PieceSchedulingContraint(Constraint[str, str]):
+    # This conflict represents two pieces with the same dancers, which cannot be
+    # scheduled at the same time
+    def __init__(self, piece1: str, piece2: str) -> None:
+        super().__init__([piece1, piece2])
+        self.piece1: str = piece1
+        self.piece2: str = piece2
+  
+    def satisfied(self, assignment: Dict[str, str]) -> bool:
+        # If either piece is not in the assignment then it is not
+        # yet possible for their rehearsals to be conflicting
+        if self.piece1 not in assignment or self.piece2 not in assignment:
+         return True
+        # check the rehearsal assigned to piece1 is not the same as the
+        # rehearsal assigned to piece2
+        return assignment[self.piece1] != assignment[self.piece2]
+ 
+class TimeSchedulingContraint(Constraint[str, str]):
+    # This conflict represents the number of pieces that can be assigne to a 
+    # given time, which is determined by the maxRehearsalsPerTime dict
+    def __init__(self, pieces: List[str]) -> None:
+        super().__init__(pieces)
+        self.maxRehearsalsPerTime: Dict[str, int] = GetMaxRehearsalsPerTime()
+  
+    def satisfied(self, assignment: Dict[str, str]) -> bool:
+        time_count_dict = defaultdict(lambda: 0)
+        for _, time in assignment.items():
+            time_count_dict[time] += 1
+            if time_count_dict[time]>self.maxRehearsalsPerTime[time]:
+                return False 
+        return True
 
-def build_L(freeTime, ts):
-    L = [["x" for i in xrange(len(ts["dayHeader"]))] for j in xrange(len(ts["timeHeader"]))]
-    count = 0
-    for fT in freeTime:
-        (day, time) = fT
-        day_index, time_index = ts["dayHeader"].index(day), ts["timeHeader"].index(time)
-        L[time_index][day_index] = ""
-    return L
+def AddDancerPiecesConstraints() -> CSP[str, str]: 
+    dancer_directory: Dict[str, List[str]] = DancerDirectory(DANCER_FILE)
+    all_pieces: List[str] = dancer_directory.list_pieces()
+    times: Dict[str, List[str]] = GetRehearsalsPerTime()
+    # setting up the csp to add constraints
+    csp: CSP[str, str] = CSP(all_pieces, times)
+    piece_constraints_dict: Dict[str, List[str]] = defaultdict(lambda: [])
+    for dancer, pieces in dancer_directory.Dancers.items():
+        for i in range(len(pieces)):
+            for j in range(i+1, len(pieces)):
+                if pieces[i] not in piece_constraints_dict[pieces[j]] and pieces[j] not in piece_constraints_dict[pieces[i]]: 
+                    csp.add_constraint(PieceSchedulingContraint(pieces[i], pieces[j]))
+                    piece_constraints_dict[pieces[i]].append(pieces[j])
+    csp.add_constraint(TimeSchedulingContraint(pieces))
+    return csp
 
-def merge_timesheets(timesheet_folder):
-    ts = create_dict_of_timesheets(timesheet_folder)
-    freeTime = []
-    for name in ts:
-        if type(ts[name]) is Timesheet:
-            tsTime = free_times(ts[name]) #@TODO: Implement slack variable
-            if len(freeTime) > 0:
-                freeTime = [val for val in freeTime if val in set(tsTime)]
-            else:
-                freeTime = tsTime
-    L = build_L(freeTime, ts)
-    masterT = Timesheet(ts["name"], L, ts["dayHeader"], ts["timeHeader"])
-    return masterT
 
-def create_space_dict():
-    sD = dict()
-    sDict = create_dict_of_timesheets(SPACE_TIMESHEET_FOLDER)
-    for skey in sDict:
-        if sDict["name"] in skey:
-            sD[skey[skey.find("-") + 2:]] = sDict[skey]
-    return sD
+def exampleTest():
+    csp = AddDancerPiecesConstraints()
+    print("csp set up")
+    solution: Optional[Dict[str, str]] = csp.backtracking_search()
+    print("csp backtracking complete")
+    if solution is None:
+        print("No solution found! Here is the best solution:")
+        print(csp.get_best_solution())
+    else:
+        print(solution)
 
-def make_assign_list():
-    aD = dict()
-    last_choreographer = ""
-    assign_file = open(ASSIGNED_UNASSIGNED_FILE, 'rU')
-    for i, line in enumerate(assign_file):
-        text = line.strip().split(",")
 
-        try:
-            parse_attempt = int(text[0])
-            dancer = text[1].strip()
-            aD[last_choreographer] += 1
-            #print "Successfully added %s to %s's piece" % (dancer, last_choreographer)
-        except:
-            last_choreographer = text[0].strip()
-            aD[last_choreographer] = 0 #create piece in assign_list
-            #print "Successfully created %s's piece" % last_choreographer    
-    assign_file.close()
-
-    aL = sorted(aD, key=aD.get, reverse=True)
-    return aL
-
-def assign_dances(dT, sD, aL):
-    #@TODO: this
-
-def run():
-    dT = merge_timesheets(DANCE_TIMESHEET_FOLDER)
-    dT.write(os.getcwd()) # prints to "<dance name - sem/year>.txt"
-
-    sD = create_space_dict()
-    aL = make_assign_list() # ordered from largest to smallest, by increasing index
-
-    schD = assign_dances(dT, sD, aL) # dictionary of scheduled dances, index by time
-    
-run()
+if __name__ == "__main__":
+    exampleTest()
